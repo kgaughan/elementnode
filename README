@@ -1,0 +1,127 @@
+
+ElementNode v1.0.0 -- A fluent XML builder
+by Keith Gaughan
+
+
+Introduction
+============
+
+ElementNode is a port to Java of a small PHP library I wrote some time ago. It
+is designed to make building XML documents easy, and to present a simpler way
+to build DOM object trees.
+
+It presents a *fluent interface*, which is to say where you'd usually expect
+a method to return nothing, the method returns the object you're calling it
+upon or the object you'd most likely be operating upon next. Its fluency it
+where its ease of use over the standard DOM interface comes from.
+
+
+Usage
+=====
+
+ElementNode is supplied with a full set of Javadoc documentation for the API
+as reference. Here, I'll limit myself to demonstrating its use by showing some
+code for building an RSS document. It's a bit of a toy example, but should get
+the point across.
+
+class Weblog ...
+	public void toRss(final ElementNode channel) {
+		channel
+			.addTextChild("title",         getTitle())
+			.addTextChild("description",   getTagline()).
+			.addTextChild("link"           getUrl())
+			.addTextChild("language",      getLanguage())
+			.addTextChild("ttl",           "1440")
+			.addTextChild("copyright",     getCopyright())
+			.addTextChild("lastBuildDate", DateUtils.formatHttpDate(DateUtils.getUtcNow()))
+			.addTextChild("docs",          "http://backend.userland.com/rss")
+			.addTextChild("generator",     getEngineName())
+			.addChild("image")
+				.addTextChild("link",   getUrl())
+				.addTextChild("title",  getTitle())
+				.addTextChild("url",    getLogo().getUrl())
+				.addTextChild("width",  getLogo().getWidth())
+				.addTextChild("height", getLogo().getHeight());
+	}
+
+	public static String toRss(final Weblog blog, final Entry[] entries) {
+		ElementNode root    = new ElementNode("rss").addAttribute("version", "2.0");
+		ElementNode channel = root.addChild("channel");
+
+		// Generate the feed metadata.
+		blog.toRss(channel);
+
+		// Generate the items.
+		for (int i = 0; i < entries.length; ++i) {
+			entries[i].toRss(channel);
+		}
+
+		return root.toString();
+	}
+
+class Entry ...
+	public void toRss(final ElementNode channel) {
+		channel
+			.addChild("item")
+				.addTextChild("title",       .getTitle())
+				.addTextChild("pubDate,      DateUtils.formatHttpDate(getPublicationDate())
+				.addTextChild("description", getBody())
+				.addChild("guid",            getPermaLink())
+					.addAttribute("isPermaLink", "true");
+	}
+
+class DateUtils ...
+	public static Date   shiftDate(final Date dt, final TimeZone tz) ...
+	public static Date   getUtcNow() ...
+	public static String formatHttpDate(final Date dt) ...
+
+Imagine doing that quite so easily with the DOM or string concatenation...
+
+The library comes with full source and an almost complete compliment of unit
+tests to demonstrate its usage.
+
+
+Limitations
+===========
+
+ElementNode currently omits namespace support. This is on purpose and down to
+me not having any projects I'm using ElementNode with that require namespaces.
+Extending it to support namespaces would, however, be trivial.
+
+ElementNode omits support for the embedding of comments and processing
+instructions. I don't feel support for these is particularly necessary right
+now, so I feel no great need to add them.
+
+The toString() method only ever generates the default character encoding,
+UTF-8. If you want to generate an XML document in another encoding, then use
+toXml() generate the DOM tree, and convert it yourself.
+
+There is no way to enumerate child nodes or attributes. This is by design to
+keep the interface simple.
+
+Values are currently limited to strings. I may extend ElementNode's interface
+to support primitive types directly and formatting using java.text.Format.
+
+Credits and License
+===================
+
+Copyright (c) Keith Gaughan, 2006.
+
+This software is released under the terms of the Common Public License (CPL).
+If the terms of the CPL, contact me to see if it's possible for me to give
+your project a special dispensation.
+
+Contacting the Author
+=====================
+
+The project homepage is at http://talideon.com/projects/elementnode/.
+
+If you want to contact me, you can do so with the contact form on my site at:
+http://talideon.com/about/contact/.
+
+
+History
+=======
+
+1.0.0 (2006-03-18)
+	Initial Release.
