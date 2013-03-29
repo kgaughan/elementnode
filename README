@@ -25,55 +25,55 @@ code for building an RSS document. It's a bit of a toy example, but should get
 the point across.
 
 class Weblog ...
-	public void toRss(final ElementNode channel) {
-		channel
-			.addTextChild("title",         getTitle())
-			.addTextChild("description",   getTagline()).
-			.addTextChild("link"           getUrl())
-			.addTextChild("language",      getLanguage())
-			.addTextChild("ttl",           "1440")
-			.addTextChild("copyright",     getCopyright())
-			.addTextChild("lastBuildDate", DateUtils.formatHttpDate(DateUtils.getUtcNow()))
-			.addTextChild("docs",          "http://backend.userland.com/rss")
-			.addTextChild("generator",     getEngineName())
-			.addChild("image")
-				.addTextChild("link",   getUrl())
-				.addTextChild("title",  getTitle())
-				.addTextChild("url",    getLogo().getUrl())
-				.addTextChild("width",  getLogo().getWidth())
-				.addTextChild("height", getLogo().getHeight());
-	}
+    public void toRss(final ElementNode channel) {
+        channel
+            .addTextChild("title",         getTitle())
+            .addTextChild("description",   getTagline()).
+            .addTextChild("link"           getUrl())
+            .addTextChild("language",      getLanguage())
+            .addTextChild("ttl",           "1440")
+            .addTextChild("copyright",     getCopyright())
+            .addTextChild("lastBuildDate", DateUtils.formatHttpDate(DateUtils.getUtcNow()))
+            .addTextChild("docs",          "http://backend.userland.com/rss")
+            .addTextChild("generator",     getEngineName())
+            .addChild("image")
+                .addTextChild("link",   getUrl())
+                .addTextChild("title",  getTitle())
+                .addTextChild("url",    getLogo().getUrl())
+                .addTextChild("width",  getLogo().getWidth())
+                .addTextChild("height", getLogo().getHeight());
+    }
 
-	public static String toRss(final Weblog blog, final Entry[] entries) {
-		ElementNode root    = new ElementNode("rss").addAttribute("version", "2.0");
-		ElementNode channel = root.addChild("channel");
+    public static String toRss(final Weblog blog, final Entry[] entries) {
+        ElementNode root    = new ElementNode("rss").addAttribute("version", "2.0");
+        ElementNode channel = root.addChild("channel");
 
-		// Generate the feed metadata.
-		blog.toRss(channel);
+        // Generate the feed metadata.
+        blog.toRss(channel);
 
-		// Generate the items.
-		for (int i = 0; i < entries.length; ++i) {
-			entries[i].toRss(channel);
-		}
+        // Generate the items.
+        for (int i = 0; i < entries.length; ++i) {
+            entries[i].toRss(channel);
+        }
 
-		return root.toString();
-	}
+        return root.toString();
+    }
 
 class Entry ...
-	public void toRss(final ElementNode channel) {
-		channel
-			.addChild("item")
-				.addTextChild("title",       .getTitle())
-				.addTextChild("pubDate,      DateUtils.formatHttpDate(getPublicationDate())
-				.addTextChild("description", getBody())
-				.addChild("guid",            getPermaLink())
-					.addAttribute("isPermaLink", "true");
-	}
+    public void toRss(final ElementNode channel) {
+        channel
+            .addChild("item")
+                .addTextChild("title",       .getTitle())
+                .addTextChild("pubDate,      DateUtils.formatHttpDate(getPublicationDate())
+                .addTextChild("description", getBody())
+                .addChild("guid",            getPermaLink())
+                    .addAttribute("isPermaLink", "true");
+    }
 
 class DateUtils ...
-	public static Date   shiftDate(final Date dt, final TimeZone tz) ...
-	public static Date   getUtcNow() ...
-	public static String formatHttpDate(final Date dt) ...
+    public static Date   shiftDate(final Date dt, final TimeZone tz) ...
+    public static Date   getUtcNow() ...
+    public static String formatHttpDate(final Date dt) ...
 
 Imagine doing that quite so easily with the DOM or string concatenation...
 
@@ -124,4 +124,4 @@ History
 =======
 
 1.0.0 (2006-03-18)
-	Initial Release.
+    Initial Release.
